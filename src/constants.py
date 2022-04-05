@@ -1,12 +1,13 @@
 import numpy as np
 
 
-t = 2
+#t = 2
+t = np.pi
 delta = 0.50*t
 mu = 0.0*t
-B = 0.50*t
+B = 0.30*t
 a = 1.0*t
-omega = 1.0*t
+omega = 0.1*t
 A = 0.01*t
 d = 2
 N = 25

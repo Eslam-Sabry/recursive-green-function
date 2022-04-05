@@ -44,3 +44,5 @@ class Hamiltonian():
         plt.legend()
         plt.show()
 
+    #def bulk_green_function(self,z):
+        #G_k = 
