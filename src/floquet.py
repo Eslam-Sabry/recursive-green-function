@@ -2,7 +2,8 @@ from functools import reduce
 import numpy as np
 from constants import *
 from numpy import linalg as la
-import kwant
+from green_function import *
+
 
 def evolution_operator(hamiltonians, T):
     n = len(hamiltonians)
@@ -33,15 +34,15 @@ def calculate_bands(momenta, hamiltonians_k, T):
     return np.array(energies).real
 
 
-def onsite(site, t, mu, B, delta):
-    return (2 * t - mu) * np.kron(s_z,s_0) + B * np.kron(s_0,s_z) + delta * np.kron(s_x,s_0)
+def onsite(t, mu):
+    return (2 * t - mu) * s_z
 
 
-def hopping(site1, site2, t, alpha):
-    return -t * np.kron(s_z,s_0) + 0.5 * 1j * alpha * np.kron(s_z,s_x)
+def hopping(t, delta):
+    return -t * s_z +  1j * delta * s_y
 
 
-lat = kwant.lattice.chain()
+kitaev_chain = Hamiltonian()
 infinite_nanowire = kwant.Builder(kwant.TranslationalSymmetry((-1,)))
 infinite_nanowire[lat(0)] = onsite
 infinite_nanowire[kwant.HoppingKind((1,), lat)] = hopping
