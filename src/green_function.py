@@ -5,7 +5,7 @@ from constants import *
 
 
 def mobius_transformation_matrix(z,h:Hamiltonian):
-    d, N, u, v = h.d, h.N, h.u, h.v
+    d, N, u, v = h.d, h.N, h.onsite, h.hopping
     v_dagger = np.conj(v.transpose())
     v_inv = la.inv(v)
     Id = np.eye(d)
