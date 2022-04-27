@@ -27,15 +27,20 @@ class Hamiltonian():
     
     def k_space_hamiltonian(self,k):
         d, N, u, v = self.d, self.N, self.u, self.v
-        H_k = u + math.cos(k) * v.real + math.sin(k) * v.imag
+        v_dagger = np.conjugate(v.transpose())
+        v_sym = (v + v_dagger)/2
+        v_asym = (v - v_dagger)/(2)
+        H_k = u + 2*math.cos(k) * v_sym + 1j*2*math.sin(k) * v_asym
         return H_k
     
     def plot_spectrum(self):
         var_k = np.linspace(-np.pi,np.pi,50)
         spectrum = []
         for i in range(len(var_k)):
-            eval,evec=la.eigh([self.k_space_hamiltonian(k=var_k[i])])
-            spectrum.append(eval[0])
+            unsorted_eval=la.eigvals(self.k_space_hamiltonian(k=var_k[i]))
+            unsorted_eval = np.sort(np.abs(unsorted_eval))
+            ev = np.sort([(-1) ** n * val for n, val in enumerate(unsorted_eval)])
+            spectrum.append(ev)
         plt.title("Energy spectrum")
         plt.plot(var_k,spectrum, label='spectrum')
         #plt.plot(var_mu/t,G_img-F_img,label = 'G_img-F_img')

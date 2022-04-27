@@ -3,16 +3,17 @@ import numpy as np
 from constants import *
 from green_function import *
 #import holoviews
-from scipy import linalg as la
+from numpy import linalg as la
 import matplotlib as mp
+import scipy.linalg as sla
 plt.style.use('seaborn')		# Setting the plotting style
 mp.rcParams['figure.figsize'] = (15, 10)  # Setting the size of the plots
 
 
 def evolution_operator(hamiltonians, T):
     n = len(hamiltonians)
-    exps = [la.expm(-1j * h * T / n) for h in hamiltonians]
-    return reduce(np.dot, exps)
+    exps = [sla.expm(-1j * h * T / n) for h in hamiltonians]
+    return reduce(np.matmul, exps)
 
 
 def calculate_finite_spectrum(periods, hamiltonians):
@@ -149,30 +150,32 @@ def hopping(t=t, delta=delta):
 #var_time = dict()
 #periods = np.linspace(0.2 / t, 1.6 / t, 100)
 periods = np.linspace(0.2 / t, 3 / t, 200)
-momenta = np.linspace(-np.pi, np.pi,100)
+momenta = np.linspace(-2*np.pi, 2*np.pi,100)
 #omegas = 2 * np.pi / periods
 #var_time = [np.linspace(0,T,11) for T in periods]
 N = 50
-h_1 = Hamiltonian(d,N,onsite(mu=1*t),hopping())
-h_2 = Hamiltonian(d,N,onsite(mu=3*t),hopping())
+
+h_1 = Hamiltonian(d,N,onsite(mu=0*t),hopping(delta = 2*t))
+h_2 = Hamiltonian(d,N,onsite(mu=1*t),hopping(delta = 2*t))
 
 
-energies = calculate_finite_spectrum(periods, [h_1.lattice_hamiltonian(), h_2.lattice_hamiltonian()])
+#energies = calculate_finite_spectrum(periods, [h_1.lattice_hamiltonian(), h_2.lattice_hamiltonian()])
 #spectrum = np.array([calculate_bands(momenta, [h_1.k_space_hamiltonian, h_2.k_space_hamiltonian], T) for T in periods])
 
-#T = 0.6
+T = 0.6
 
-#interesting_bulk_spectrum = calculate_bands(momenta, [h_1.k_space_hamiltonian, h_2.k_space_hamiltonian],T= T)
+interesting_bulk_spectrum = calculate_bands(momenta, [h_1.k_space_hamiltonian, h_2.k_space_hamiltonian],T= T)
 
-"""
-plt.title(f"Energy Spectrum as a function of the period $T$ (N = {N} sites)")
-for i in range(200):
+
+"""plt.title(f"Energy Spectrum as a function of the period $T$ (N = {N} sites)")
+for i in range(100):
     plt.plot(periods,spectrum[:,i])
 plt.ylabel('Energy')
 plt.xlabel('$\mu/t$')
 plt.show()
 """
 
+'''
 plt.title(f"Energy Spectrum as a function of the period $T$ (N = {N} sites)")
 for i in range(d*N):
     plt.plot(periods,energies[:,i]/np.pi)
@@ -181,13 +184,15 @@ plt.xlabel('$T$, periodic chemical potential case')
 #plt.savefig('mu case-trivial.png')
 plt.show()
 '''
+
+
 plt.title(f"Bulk system's Energy Spectrum as a function of momentum $k$ at T = {T}")
 plt.plot(momenta,interesting_bulk_spectrum/np.pi)
 plt.ylabel('Energy/pi')
 plt.xlabel('$k$, periodic chemical potential case')
 #plt.savefig('bulk spectrum.png')
 plt.show()
-'''
+
 
 
 
